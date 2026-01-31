@@ -1,0 +1,61 @@
+openapi: 3.0.3
+info:
+  title: Invoice Workflow API
+  version: 1.0.0
+
+paths:
+  /workflow:
+    get:
+      summary: Get workflow definition
+      responses:
+        "200":
+          description: Workflow schema
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkflowSchema"
+
+components:
+  schemas:
+    WorkflowSchema:
+      type: object
+      required:
+        - id
+        - initialState
+        - states
+        - transitions
+      properties:
+        id:
+          type: string
+        initialState:
+          type: string
+        states:
+          type: array
+          items:
+            type: string
+        transitions:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkflowTransition"
+
+    WorkflowTransition:
+      type: object
+      required:
+        - from
+        - to
+        - action
+        - allowedRoles
+      properties:
+        from:
+          type: string
+        to:
+          type: string
+        action:
+          type: string
+        allowedRoles:
+          type: array
+          items:
+            type: string
+            enum: [USER, REVIEWER, ADMIN]
+        guard:
+          type: string
