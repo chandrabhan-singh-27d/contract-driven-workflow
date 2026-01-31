@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Contract-Driven Workflow Engine (Frontend)
 
-## Getting Started
+This project demonstrates a **contract-driven, state-machine-based workflow system**
+built with modern frontend tooling.
 
-First, run the development server:
+The goal is to **separate business workflow logic from UI**, enforce backend ownership,
+and make complex operational flows predictable, testable, and evolvable.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Core Principles
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 1. Backend (BFF) Owns the Workflow
+- Workflow steps
+- State transitions
+- Permissions
+- Guards
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Frontend consumes the workflow as **data**, not code.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+### 2. Workflow Is a Pure State Machine
+- No React
+- No Zustand
+- No side effects
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+If logic cannot be tested without the UI, it does not belong here.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+### 3. UI Is Dumb
+UI renders:
+- Current state
+- Available actions
+- Validation errors
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+UI never decides:
+- What action is allowed
+- Whether a transition is valid
+- Who can do what
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Tech Stack
+
+- **Next.js (App Router)** – Application shell
+- **TypeScript** – Strong contracts
+- **Vitest** – Fast, deterministic tests
+- **Zod** – Schema-driven validation
+- **React Hook Form** – Form orchestration
+- **Zustand** – Thin state wrapper
+- **Tailwind CSS** – Styling (irrelevant to logic)
+
+---
+
+## Folder Structure (Why It Matters)
+app/
+├── api/
+│   └── workflow/          # Mock BFF – workflow contract source
+│
+domain/
+└── workflow/              # Pure business logic (state machine)
+    ├── workflow.contract.ts
+    ├── workflow.engine.ts
+    ├── workflow.guards.ts
+    ├── workflow.mock.ts
+    └── workflow.engine.spec.ts
+│
+store/
+└── workflow.store.ts      # Thin orchestration layer (Zustand)
+│
+ui/
+└── workflow/              # Dumb rendering components
+    ├── WorkflowRenderer.tsx
+    └── ActionBar.tsx
+│
+lib/
+└── fetcher.ts             # Shared infra helpers (no business rules)
+│
+styles/
+└── globals.css
+│
+tests/
+└── setup.ts
